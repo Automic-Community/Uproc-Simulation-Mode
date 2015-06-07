@@ -1,0 +1,41 @@
+@ECHO OFF
+:: ============================================================================================================= ::
+:: Orsyp S.A.                                                                                                    ::
+:: PROCEDURE:  U_ANTE_UPROC.bat                                                                                  ::
+:: OBJECT:     Customer pre-processing exit.                                                                     ::
+::             Run systematically before executing each Uproc.                                                   ::
+::                                                                                                               ::
+:: Received parameter                                                                                            ::
+::             None                                                                                              ::
+:: ============================================================================================================= ::
+
+echo %DATE% %TIME%
+echo.
+
+IF "%SIMULATION_MODE%" == "Y" GOTO :SKIP
+IF "%IS_ACTIVE%" == "N" GOTO :SKIP
+
+:RUN_UPROC
+
+GOTO :END_ANTE
+
+:SKIP
+set resexe=0
+REM set /A SLEEP_RANDOM=%RANDOM:~0,1%
+set /A SLEEP_RANDOM=%RANDOM:~0,-3%
+set /A SLEEP_RANDOM=%SLEEP_RANDOM%/3
+echo ==================================
+echo ***** Simulation mode is ON! *****
+echo ==================================
+echo Sleep for %SLEEP_RANDOM% secs
+%UNI_DIR_EXEC%\uxsleep %SLEEP_RANDOM%
+REM remove temporary files
+if exist %s_numproc_file% erase %s_numproc_file%
+if exist %s_uproc_file% erase %s_uproc_file%
+
+%UXEXE%\uxjobend %RESEXE%
+exit
+
+GOTO :END_ANTE
+
+:END_ANTE
